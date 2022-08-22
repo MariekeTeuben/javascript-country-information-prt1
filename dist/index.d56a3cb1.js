@@ -462,23 +462,44 @@ function hmrAcceptRun(bundle, id) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
-const countryList = document.getElementById('list-of-countries');
 async function getCountryInformation() {
     try {
         const result = await _axiosDefault.default.get('https://restcountries.com/v2/all');
-        console.log(result.data);
-        countryList.innerHTML = `
-        <li>
-            <img src=" ${result.data[0].flag}" alt="country-flag"/>
-            ${result.data[0].name}
-            <p>Has a population of ${result.data[0].population} people</p> 
-        </li>
-        `;
+        const countries = result.data;
+        createListItems(countries);
     } catch (e) {
         console.error(e);
     }
 }
 getCountryInformation();
+function createListItems(countries) {
+    const countryList = document.getElementById('list-of-countries');
+    countryList.innerHTML = countries.map((country)=>{
+        return `
+        <li>
+            <img src="${country.flag}" alt="Vlag van ${country.name}" class="flag" />
+            <span class="${getRegionClass(country.region)}">${country.name}</span>
+            <p class="population">Has a population of ${country.population} people</p>
+        </li>
+        `;
+    }).join('');
+}
+function getRegionClass(regionName) {
+    switch(regionName){
+        case 'Africa':
+            return 'blue';
+        case 'Americas':
+            return 'green';
+        case 'Asia':
+            return 'red';
+        case 'Europe':
+            return 'yellow';
+        case 'Oceania':
+            return 'purple';
+        default:
+            return 'default';
+    }
+}
 
 },{"axios":"1IeuP","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1IeuP":[function(require,module,exports) {
 module.exports = require('./lib/axios');
